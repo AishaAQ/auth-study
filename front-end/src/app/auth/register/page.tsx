@@ -1,29 +1,29 @@
 import React from 'react'
 import Link from 'next/link'
+import styles from '@/app/auth/auth.module.css'
 
 function page() {
   return (
-        <>
-        <h1>Log in</h1>
-        <div>
+    <>
+        <div className={styles.authPage}>
+            <h1>Create your account</h1>
             <form>
                 <div>
-                    <label htmlFor="username">Email</label>
-                    <input type="text" id="username" name="username" required></input>
+                    <label htmlFor="email">Email address</label>
+                    <input type="email" id="email" name="email" required></input>
                 </div>
                 <div>
                     <label htmlFor="password">Password</label>
                     <input type="password" id="password" name="password" required></input>
-                    <Link href="/">Forgot password?</Link>
                 </div>
                 <button type="submit">Register</button>
             </form>
-            <line>OR</line>
+            <p>OR</p>
             <div>
                 <button>Continue with Google</button>
             </div>
 
-            <p>Don't have an account? <Link href="/register">Register</Link></p>
+            <p>Already have an account? <Link href="/auth/login">Log in</Link></p>
             
         </div>
     </>
