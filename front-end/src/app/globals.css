@@ -5,9 +5,14 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --inputboxcolour: #c2c2c2;
+  --background: hsl(0,0,97);
+  --foreground: hsl(207,13,27);
+  --bordercolor: hsl(200,17,53);
+  --boxshadow: hsl(0,0,78);
+  --heading: hsl(208,16,31);
+  --label: hsl(0,0,40);
+  --highlighted-input: hsl(204,18,43); 
+  --neutral-text: hsl(0,0,21);
 }
 
 @media (prefers-color-scheme: dark) {
