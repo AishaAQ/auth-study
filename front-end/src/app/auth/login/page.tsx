@@ -1,33 +1,38 @@
 import React from 'react'
 import Link from 'next/link'
+import styles from '@/components/general.module.css'
+import authStyles from '@/app/auth/auth.module.css'
+import PasswordField from '@/components/PasswordField'
+import { FcGoogle } from 'react-icons/fc'
 
 function page() {
   return (
         <>
-        <h1>Log in</h1>
-        <div>
-            <form>
-                <div>
-                    <label htmlFor="username">Email</label>
-                    <input type="text" id="username" name="username" required></input>
+            <div className={authStyles.authPage}>
+                <div className={authStyles.authCard}>
+                    <h1>Log in</h1>
+                    <form className={styles.form}>
+                        <div>
+                            <label htmlFor="email">Email</label>
+                            <input type="email" id="email" name="email" required></input>
+                        </div>
+                        <PasswordField />
+                        <Link className={`${styles.linkText} ${authStyles.linkText}`} href="/">Forgot password?</Link>
+                        <button type="submit" className={styles.customButton}>Log in</button>
+                    </form>
+                    <p className={ styles.dividedText }>or</p>
+                    <button className={ `${ authStyles.thirdPartyButton} ${authStyles.googleButton}`}>
+                        <FcGoogle/>
+                        <p>Continue with Google</p>
+                    </button>
+                    <p className={ styles.secondaryText }>Don't have an account?&nbsp;
+                        <Link className={ styles.linkText } href="/auth/register">Register</Link>
+                    </p>
                 </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input type="password" id="password" name="password" required></input>
-                    <Link href="/">Forgot password?</Link>
-                </div>
-                <button type="submit">Register</button>
-            </form>
-            <p>OR</p>
-            <div>
-                <button>Continue with Google</button>
             </div>
 
-            <p>Don't have an account? <Link href="/auth/register">Register</Link></p>
-            
-        </div>
-    </>
-  )
+        </>
+    )
 }
 
 export default page

@@ -13,6 +13,12 @@
   --label: hsl(0,0,40);
   --highlighted-input: hsl(204,18,43); 
   --neutral-text: hsl(0,0,21);
+  --button-text: hsl(200, 16, 96);
+  --button-bgcolor: hsl(203, 17, 53);
+  --button-bghover: hsl(204, 18, 43);
+  --secondary-text: hsl(0,0,48);
+  --line: hsl(0,0,78);
+  --linkText: hsl(206, 18, 38);
 }
 
 @media (prefers-color-scheme: dark) {

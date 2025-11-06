@@ -1,15 +1,17 @@
 import Link from 'next/link'
-import styles from '@/app/auth/auth.module.css'
+import authStyles from '@/app/auth/auth.module.css'
+import styles from '@/components/general.module.css'
 import PasswordField from '@/components/PasswordField'
+import { FcGoogle } from 'react-icons/fc'
 
 function page() {
 
   return (
     <>
-        <div className={styles.authPage}>
-            <div className={styles.authCard}>
+        <div className={authStyles.authPage}>
+            <div className={authStyles.authCard}>
                 <h1>Create your account</h1>
-                <form>
+                <form className={ styles.form }>
                     <div>
                         <label htmlFor="email">Email address</label>
                         <input type="email" id="email" name="email" required></input>
@@ -17,12 +19,15 @@ function page() {
                     <PasswordField />
                     <button type="submit" className={styles.customButton}>Register</button>
                 </form>
-                <p>OR</p>
-                <div>
-                    <button>Continue with Google</button>
-                </div>
+                <p className={ styles.dividedText }>or</p>
+                <button className={ `${ authStyles.thirdPartyButton} ${authStyles.googleButton}`}>
+                    <FcGoogle/>
+                    <p>Continue with Google</p>
+                </button>
 
-                <p>Already have an account? <Link href="/auth/login">Log in</Link></p>
+                <p className={ styles.secondaryText }>Already have an account?&nbsp;
+                    <Link className={ styles.linkText } href="/auth/login">Log in</Link>
+                </p>
             
             </div>
    
