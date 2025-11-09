@@ -6,24 +6,17 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa'
 function PasswordField() {
 
     const [showPassword, setShowPassword] = useState(false);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const handleTogglePassword = () => {
-        setShowPassword(!showPassword);
-        inputRef.current?.focus(); 
-    };
 
     return (
         <div className={styles.passwordContainer}>
             <label htmlFor="password">Password</label>
             <input 
                 type={showPassword ? "text" : "password"} 
-                ref={inputRef}
                 id="password" name="password" required></input>
             <button 
                 type="button" 
                 className={styles.togglePassword}
-                onClick={handleTogglePassword} 
+                onClick={() => {setShowPassword(!showPassword);} } 
                 aria-label={showPassword ? "Hide password" : "Show password"}
             >
                 {showPassword ? <FaEyeSlash/> : <FaEye/>}

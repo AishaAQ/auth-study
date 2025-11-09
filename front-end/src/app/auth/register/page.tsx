@@ -1,17 +1,26 @@
+'use client'
 import Link from 'next/link'
 import authStyles from '@/app/auth/auth.module.css'
 import styles from '@/components/general.module.css'
 import PasswordField from '@/components/PasswordField'
 import { FcGoogle } from 'react-icons/fc'
+import { useRouter } from 'next/navigation'
 
 function page() {
+
+    const router = useRouter();
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        router.push('/auth/verify-email')
+    }
 
   return (
     <>
         <div className={authStyles.authPage}>
             <div className={authStyles.authCard}>
                 <h1>Create your account</h1>
-                <form className={ styles.form }>
+                <form className={ styles.form } onSubmit={handleSubmit}>
                     <div>
                         <label htmlFor="email">Email address</label>
                         <input type="email" id="email" name="email" required></input>

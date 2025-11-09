@@ -17,6 +17,7 @@
     padding: 2.5rem 0rem;
     border-radius: 1rem;
     width: 30rem;
+    min-height: 20rem;
 
     h1 {
         font-weight: normal;
@@ -24,6 +25,18 @@
         color: var(--heading);
         font-weight: bold;
     }
+
+}
+
+.authCardWide {
+    margin: 0rem 3.5rem;
+}
+
+.instruction {
+    text-align: center;
+    margin-top: -1rem;
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
 }
 
 .thirdPartyButton {

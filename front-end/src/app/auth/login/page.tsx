@@ -17,7 +17,7 @@ function page() {
                             <input type="email" id="email" name="email" required></input>
                         </div>
                         <PasswordField />
-                        <Link className={`${styles.linkText} ${authStyles.linkText}`} href="/">Forgot password?</Link>
+                        <Link className={`${styles.linkText} ${authStyles.linkText}`} href="/auth/reset-password">Forgot password?</Link>
                         <button type="submit" className={styles.customButton}>Log in</button>
                     </form>
                     <p className={ styles.dividedText }>or</p>
