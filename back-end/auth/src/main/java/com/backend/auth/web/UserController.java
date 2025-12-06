@@ -11,6 +11,8 @@ import com.backend.auth.model.User;
 import com.backend.auth.service.UserService;
 import com.backend.auth.web.dto.UserDTO;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class UserController {
 	
@@ -21,8 +23,8 @@ public class UserController {
 	}
 
 	@PostMapping("/users")
-	public void register(@RequestBody UserDTO user) {
-		userService.addUser(user.email, user.password);
+	public void register(@RequestBody @Valid UserDTO user) {
+		userService.createUser(user.email, user.password);
 	}
 	
 	@GetMapping("/users")
