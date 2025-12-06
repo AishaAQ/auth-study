@@ -23,8 +23,11 @@ public class UserService {
 
 	}
 
-	public void addUser(String email, String password) {
-		users.put(email,new User(email,password));
+	public User createUser(String email, String password) {
+		
+		if (users.containsKey(email)) return null;
+		
+		return users.put(email,new User(email,password));
 	}
 	
 	public Collection<User> getUsers() {
