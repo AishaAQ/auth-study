@@ -5,13 +5,23 @@ import styles from '@/components/general.module.css'
 import PasswordField from '@/components/PasswordField'
 import { FcGoogle } from 'react-icons/fc'
 import { useRouter } from 'next/navigation'
+import { FormEvent } from 'react'
 
 function page() {
 
     const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    async function onSubmit (event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        const data = Object.fromEntries(formData)
+        const response = await fetch('http://localhost:8080/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
         router.push('/auth/verify-email')
     }
 
@@ -20,7 +30,7 @@ function page() {
         <div className={authStyles.authPage}>
             <div className={authStyles.authCard}>
                 <h1>Create your account</h1>
-                <form className={ styles.form } onSubmit={handleSubmit}>
+                <form className={ styles.form } onSubmit={onSubmit}>
                     <div>
                         <label htmlFor="email">Email address</label>
                         <input type="email" id="email" name="email" required></input>
