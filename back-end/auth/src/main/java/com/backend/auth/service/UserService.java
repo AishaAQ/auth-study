@@ -3,6 +3,7 @@ package com.backend.auth.service;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class UserService {
 	public User createUser(String email, String password) {
 		
 
-		String passwordHash = Hashing.generateHash(password, null);
+		String passwordHash = Hashing.generateHash(password, Optional.empty());
 	        
 		if (users.containsKey(email)) return null;
 		
