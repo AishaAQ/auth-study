@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.backend.auth.model.User;
 
+import utilities.Hashing;
+
 @Service
 public class UserService {
 	
@@ -17,17 +19,16 @@ public class UserService {
 		
 	}};
 	
-	PasswordHashingService passwordHashingService;
+	HashingService passwordHashingService;
 
-	public UserService(PasswordHashingService passwordHashingService) {
-		this.passwordHashingService = passwordHashingService;
+	public UserService() {
 
 	}
 	
 	public User createUser(String email, String password) {
 		
 
-		String passwordHash = passwordHashingService.hashPassword(password);
+		String passwordHash = Hashing.generateHash(password);
 	        
 		if (users.containsKey(email)) return null;
 		
