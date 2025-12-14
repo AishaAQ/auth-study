@@ -18,8 +18,7 @@ public class UserService {
 		put("huda@gmail.com", new User("huda@gmail.com","1234"));
 		
 	}};
-	
-	HashingService passwordHashingService;
+
 
 	public UserService() {
 
@@ -28,7 +27,7 @@ public class UserService {
 	public User createUser(String email, String password) {
 		
 
-		String passwordHash = Hashing.generateHash(password);
+		String passwordHash = Hashing.generateHash(password, null);
 	        
 		if (users.containsKey(email)) return null;
 		

@@ -1,8 +1,10 @@
 package utilities;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Optional;
 
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
@@ -34,9 +36,9 @@ public class Hashing {
 	}
 	
 	
-	public static String generateHash(String password) {
+	public static String generateHash(String password, Optional<byte[]> storedSalt) {
 		
-		byte[] salt = generateSalt();
+		byte[] salt = storedSalt.orElse(generateSalt());
 		
 		Argon2Parameters params = new Argon2Parameters.Builder(TYPE)
 				.withVersion(VERSION)
@@ -53,6 +55,20 @@ public class Hashing {
 			
 		return formatHashToString(hash,salt);
 		
+	}
+	
+	public static boolean verifyPassword(String password, String storedHashString) {
+		
+		String storedSalt = storedHashString.split("\\$")[4];
+		
+		Optional<byte[]> salt = Optional.of(Base64.getDecoder().decode(storedSalt));
+		
+		String hashString = generateHash(password, salt);
+		
+		byte[] storedHash = storedHashString.split("\\$")[5].getBytes(StandardCharsets.UTF_8);
+		byte[] hash = hashString.split("\\$")[5].getBytes(StandardCharsets.UTF_8);
+		
+		return MessageDigest.isEqual(storedHash,hash);
 		
 	}
 	
@@ -62,9 +78,6 @@ public class Hashing {
 		String saltBase64 = Base64.getEncoder().encodeToString(salt);
 		
 		StringBuilder hashString = new StringBuilder().append("$argon2");
-		
-		System.out.println(hashBase64);
-		System.out.println(saltBase64);
 		
 		switch (TYPE) {
 			case Argon2Parameters.ARGON2_d: 
@@ -94,12 +107,12 @@ public class Hashing {
 		
 	}
 	
-	public static String generateHash(String password, String salt) {
-		return null;
-	}
-	
-	public static void main(String[] args) {
-		generateHash("idk");
-	}
+//	public static void main(String[] args) {
+//		String hashString = generateHash("idk", Optional.empty());
+//		
+//		System.out.println(hashString);
+//		
+//		System.out.println(verifyPassword("idkh",hashString));
+//	}
 
 }
