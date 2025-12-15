@@ -19,29 +19,33 @@ public class UserService {
 		put("huda@gmail.com", new User("huda@gmail.com","1234"));
 		
 	}};
-
+	
+	private static final String DUMMY_PASSWORD_HASH =
+		    Hashing.generateHash("dummy-password", Optional.empty());
 
 	public UserService() {
 
 	}
 	
 	public User register(String email, String password) {
+		
+		if (users.containsKey(email)) return null;
 
 		String passwordHash = Hashing.generateHash(password, Optional.empty());
 	        
-		if (users.containsKey(email)) return null;
-		
 		return users.put(email,new User(email,passwordHash));
 		
 	}
 	
 	public User authenticate(String email, String password) {
 		
-		if (!users.containsKey(email)) return null;
-		
 		User user = users.get(email);
 		
-		boolean verified = Hashing.verifyPassword(password, user.getPasswordHash());
+	    String hashString = (user != null)
+	            ? user.getPasswordHash()
+	            : DUMMY_PASSWORD_HASH;
+		
+		boolean verified = Hashing.verifyPassword(password, hashString);
 		
 		return verified ? user : null;
 	
