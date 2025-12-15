@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +32,11 @@ public class UserController {
 	@GetMapping("/users")
 	public Collection<User> getUsers() {
 		return userService.getUsers();
+	}
+	
+	@PostMapping("/user")
+	public User getUser(@RequestBody @Valid UserDTO user) {
+		return userService.getUser(user.email, user.password);
 	}
 
 }

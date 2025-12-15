@@ -35,6 +35,18 @@ public class UserService {
 		return users.put(email,new User(email,passwordHash));
 	}
 	
+	public User getUser(String email, String password) {
+		
+		if (users.containsKey(email)) return null;
+		
+		User user = users.get(email);
+		
+		boolean verified = Hashing.verifyPassword(password, user.getPasswordHash());
+		
+		return verified ? user : null;
+	
+	}
+	
 	public Collection<User> getUsers() {
 		return users.values();
 	}
