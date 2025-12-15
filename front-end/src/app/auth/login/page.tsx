@@ -1,17 +1,36 @@
-import React from 'react'
+'use client'
+import { FormEvent } from 'react'
 import Link from 'next/link'
 import styles from '@/components/general.module.css'
 import authStyles from '@/app/auth/auth.module.css'
 import PasswordField from '@/components/PasswordField'
 import { FcGoogle } from 'react-icons/fc'
+import { useRouter } from 'next/navigation'
 
 function page() {
+
+    const router = useRouter()
+
+    async function onSubmit (event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        const data = Object.fromEntries(formData)
+        const response = await fetch('http://localhost:8080/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        router.push('/logged-in')
+    }
+
   return (
         <>
             <div className={authStyles.authPage}>
                 <div className={authStyles.authCard}>
                     <h1>Log in</h1>
-                    <form className={styles.form}>
+                    <form className={styles.form} onSubmit={onSubmit}>
                         <div>
                             <label htmlFor="email">Email</label>
                             <input type="email" id="email" name="email" required></input>
