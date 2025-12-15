@@ -1,7 +1,10 @@
 package com.backend.auth.web;
 
 import java.util.Collection;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +29,7 @@ public class UserController {
 
 	@PostMapping("/users")
 	public void register(@RequestBody @Valid UserDTO user) {
-		userService.createUser(user.email, user.password);
+		userService.register(user.email, user.password);
 	}
 	
 	@GetMapping("/users")
@@ -34,9 +37,20 @@ public class UserController {
 		return userService.getUsers();
 	}
 	
-	@PostMapping("/user")
-	public User getUser(@RequestBody @Valid UserDTO user) {
-		return userService.getUser(user.email, user.password);
+	//TODO NEED TO UPDATE WHEN SESSION TOKENS IMPLEMENTED
+	@PostMapping("/session-tokens")
+	public ResponseEntity<?> authenticate(@RequestBody @Valid UserDTO user) {
+		
+		User authUser = userService.authenticate(user.email, user.password);
+		
+		if (authUser == null) {
+	        return ResponseEntity
+	        		.status(HttpStatus.UNAUTHORIZED)
+	                .body(Map.of("error", "Invalid email or password"));
+		}
+		
+		return ResponseEntity.ok(authUser);
+		
 	}
 
 }

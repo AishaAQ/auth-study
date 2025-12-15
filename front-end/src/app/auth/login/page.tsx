@@ -15,14 +15,25 @@ function page() {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
         const data = Object.fromEntries(formData)
-        const response = await fetch('http://localhost:8080/user', {
+        const response = await fetch('http://localhost:8080/session-tokens', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         })
-        router.push('/logged-in')
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(errorData.error); 
+            alert(errorData.error)
+        } 
+        else {
+            const data = await response.json();
+            console.log(data); 
+            router.push('/logged-in')
+        }
+
     }
 
   return (

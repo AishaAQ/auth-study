@@ -25,19 +25,19 @@ public class UserService {
 
 	}
 	
-	public User createUser(String email, String password) {
-		
+	public User register(String email, String password) {
 
 		String passwordHash = Hashing.generateHash(password, Optional.empty());
 	        
 		if (users.containsKey(email)) return null;
 		
 		return users.put(email,new User(email,passwordHash));
+		
 	}
 	
-	public User getUser(String email, String password) {
+	public User authenticate(String email, String password) {
 		
-		if (users.containsKey(email)) return null;
+		if (!users.containsKey(email)) return null;
 		
 		User user = users.get(email);
 		
