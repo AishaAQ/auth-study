@@ -1,6 +1,17 @@
 package com.backend.auth.model;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.validator.constraints.UniqueElements;
+
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -9,13 +20,28 @@ import jakarta.persistence.Table;
 public class User {
 	
 	@Id
-	private String userId;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(updatable = false)
+	private UUID userId;
+	
 	
 	private String email;
 	
 	private String passwordHash;
 	
 	private boolean isVerified;
+	
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+	
+	private LocalDateTime lastLogin;
+	
+	private LocalDateTime lastUpdated;
+	
+	private int failedLoginAttempts;
+	
+	@Nullable
+	private LocalDateTime lockedUntil;
 	
 	public User(String email, String passwordHash) {
 		this.email = email;
