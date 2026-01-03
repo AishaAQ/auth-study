@@ -1,3 +1,0 @@
-create table auth_user (failed_login_attempts integer not null, is_verified boolean not null, created_at timestamp(6), last_login timestamp(6), last_updated timestamp(6), locked_until timestamp(6), user_id uuid not null, email varchar(255), password_hash varchar(255), primary key (user_id));
-create table session (created_at timestamp(6), expires_at timestamp(6), last_seen_at timestamp(6), session_id uuid not null, user_id uuid not null, ip_address varchar(255), user_agent varchar(255), primary key (session_id));
-alter table if exists session add constraint session_user_fk foreign key (user_id) references auth_user;

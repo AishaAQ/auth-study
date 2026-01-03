@@ -24,28 +24,24 @@ public class User {
 	@Column(updatable = false)
 	private UUID userId;
 	
-	
+	@Column(unique = true, nullable = true)
 	private String email;
 	
-	private String passwordHash;
+	@Column(nullable = false)
+	private boolean isVerified = false;
 	
-	private boolean isVerified;
-	
+	@Column(nullable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 	
 	private LocalDateTime lastLogin;
 	
-	private LocalDateTime lastUpdated;
+	public User() {
+		
+	}
 	
-	private int failedLoginAttempts;
-	
-	@Nullable
-	private LocalDateTime lockedUntil;
-	
-	public User(String email, String passwordHash) {
+	public User(String email) {
 		this.email = email;
-		this.passwordHash = passwordHash;
 	}
 
 	public String getEmail() {
@@ -56,20 +52,28 @@ public class User {
 		this.email = email;
 	}
 
-	public String getPasswordHash() {
-		return passwordHash;
-	}
-
-	public void setPasswordHash(String passwordHash) {
-		this.passwordHash = passwordHash;
-	}
-
 	public boolean isVerified() {
 		return isVerified;
 	}
 
 	public void setVerified(boolean isVerified) {
 		this.isVerified = isVerified;
+	}
+
+	public LocalDateTime getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(LocalDateTime lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
+	public UUID getUserId() {
+		return userId;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
 	}
 
 }
