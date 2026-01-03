@@ -19,6 +19,7 @@ public class Session {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(updatable = false)
 	private UUID sessionId;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
