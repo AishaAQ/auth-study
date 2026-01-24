@@ -31,7 +31,9 @@ public class UserService {
 	}
 	
 	@Transactional
-	public User register(String email, String password) {
+	public User register(String rawEmail, String password) {
+		
+		String email = rawEmail.toLowerCase();
 		
 		if (userRepository.existsByEmail(email)) throw new ResourceAlreadyExistsException("Email already registered");
 
@@ -47,9 +49,9 @@ public class UserService {
 		
 	}
 	
-	public User authenticate(String email, String password) {
+	public User authenticate(String rawEmail, String password) {
 		
-		Optional<EmailAuth> emailAuth = emailAuthRepository.findByUserEmail(email);
+		Optional<EmailAuth> emailAuth = emailAuthRepository.findByUserEmail(rawEmail.toLowerCase());
 		
 		String hashString = emailAuth
                 .map(EmailAuth::getPasswordHash)
