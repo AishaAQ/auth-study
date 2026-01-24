@@ -1,4 +1,4 @@
-package utilities;
+package com.backend.auth.utilities;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

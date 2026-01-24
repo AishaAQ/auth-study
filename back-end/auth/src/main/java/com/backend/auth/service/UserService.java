@@ -9,9 +9,9 @@ import com.backend.auth.model.EmailAuth;
 import com.backend.auth.model.User;
 import com.backend.auth.repo.EmailAuthRepository;
 import com.backend.auth.repo.UserRepository;
+import com.backend.auth.utilities.Hashing;
 
 import jakarta.transaction.Transactional;
-import utilities.Hashing;
 
 @Service
 public class UserService {
