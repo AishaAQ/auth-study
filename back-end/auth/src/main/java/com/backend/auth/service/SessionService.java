@@ -33,4 +33,14 @@ public class SessionService {
 		
 	}
 
+	@Transactional
+	public String createSession(User user) {
+		
+		Session session = new Session(user);
+		sessionRepository.save(session);
+		
+		return session.getSessionId();
+		
+	}
+
 }
