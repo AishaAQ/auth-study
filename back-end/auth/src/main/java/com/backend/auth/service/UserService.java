@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.backend.auth.exceptions.AuthException;
+import com.backend.auth.exceptions.ResourceAlreadyExistsException;
 import com.backend.auth.model.EmailAuth;
 import com.backend.auth.model.User;
 import com.backend.auth.repo.EmailAuthRepository;
@@ -31,7 +33,7 @@ public class UserService {
 	@Transactional
 	public User register(String email, String password) {
 		
-		if (userRepository.existsByEmail(email)) return null;
+		if (userRepository.existsByEmail(email)) throw new ResourceAlreadyExistsException("Email already registered");
 
 		String passwordHash = Hashing.generateHash(password, Optional.empty());
 		
@@ -55,7 +57,10 @@ public class UserService {
 		
 		boolean verified = Hashing.verifyPassword(password, hashString);
 		
-		return verified ? emailAuth.get().getUser() : null;
+	    return emailAuth
+	            .filter(e -> verified)  
+	            .map(EmailAuth::getUser)
+	            .orElseThrow(() -> new AuthException("Invalid email or password"));
 	
 	}
 	

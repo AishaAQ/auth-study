@@ -33,7 +33,8 @@ public class Session {
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 	
-	@Column(nullable = false)
+	// TODO: sessionexpiry
+//	@Column(nullable = false)
 	private LocalDateTime expiresAt;
 	
 	private LocalDateTime lastSeenAt;
@@ -44,6 +45,10 @@ public class Session {
 	
 	public Session() {
 		
+	}
+	
+	public Session(User user) {
+		this.user = user;
 	}
 
 	public LocalDateTime getExpiresAt() {
