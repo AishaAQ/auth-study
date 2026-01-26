@@ -20,7 +20,10 @@ import com.backend.auth.web.dto.UserDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(
+	origins = "http://localhost:3000",
+	allowCredentials = "true"
+)
 @RestController
 public class UserController {
 	

@@ -1,8 +1,11 @@
 package com.backend.auth.web;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,10 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.auth.service.SessionService;
 import com.backend.auth.web.dto.UserDTO;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(
+	origins = "http://localhost:3000",
+	allowCredentials = "true"
+)
 @RestController
 public class SessionController {
 	
@@ -41,5 +48,20 @@ public class SessionController {
 	    return ResponseEntity.ok().build();
 		
 	}
+	
+	@GetMapping("/sessions/validation")
+	public ResponseEntity<?> validate(@CookieValue(value = "SessionToken", required = false) String sessionToken) {
+		
+		if (sessionToken == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		
+		boolean isValid = sessionService.isValidSession(sessionToken);
+		
+		if (!isValid) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		
+		
+	    return ResponseEntity.ok().build();
+		
+	}
+	
 
 }

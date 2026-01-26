@@ -6,7 +6,6 @@ import com.backend.auth.model.Session;
 import com.backend.auth.model.User;
 import com.backend.auth.repo.SessionRepository;
 
-import jakarta.security.auth.message.AuthException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -40,6 +39,12 @@ public class SessionService {
 		sessionRepository.save(session);
 		
 		return session.getSessionId();
+		
+	}
+
+	public boolean isValidSession(String sessionId) {
+		
+		return sessionRepository.existsBySessionId(sessionId);
 		
 	}
 
