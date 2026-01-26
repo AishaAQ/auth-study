@@ -20,6 +20,7 @@ function page() {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: "include",
             body: JSON.stringify(data)
         })
         router.push('/auth/verify-email')
