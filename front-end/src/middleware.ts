@@ -5,9 +5,9 @@ export async function middleware(request: NextRequest) {
 
     const cookie = request.cookies.get("SessionToken");
     
-    if (!cookie) return NextResponse.redirect(new URL("/login", request.url));
+    if (!cookie) return NextResponse.redirect(new URL("/auth/login", request.url));
 
-    const res = await fetch("https://localhost:8080/sessions/validate", {
+    const res = await fetch("http://localhost:8080/sessions/validation", {
         headers: {
             Cookie: `SessionToken=${cookie.value}`,
         },
@@ -15,14 +15,13 @@ export async function middleware(request: NextRequest) {
     });
 
   if (!res.ok) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
   return NextResponse.next();
 
 }
  
-// See "Matching Paths" below to learn more
 export const config = {
-  matcher: '/about/:path*',
+  matcher: '/account/:path*',
 }

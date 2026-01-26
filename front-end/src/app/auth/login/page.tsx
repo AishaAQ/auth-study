@@ -32,7 +32,7 @@ function page() {
         else {
             // const data = await response.json();
             // console.log(data); 
-            router.push('/logged-in')
+            router.push('/account/logged-in')
         }
 
     }

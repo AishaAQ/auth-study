@@ -23,7 +23,7 @@ function page() {
             credentials: "include",
             body: JSON.stringify(data)
         })
-        router.push('/auth/verify-email')
+        router.push('/account/verify-email')
     }
 
   return (
