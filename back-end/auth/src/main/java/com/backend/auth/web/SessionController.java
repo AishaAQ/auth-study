@@ -5,6 +5,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,6 +61,28 @@ public class SessionController {
 		
 		
 	    return ResponseEntity.ok().build();
+		
+	}
+	
+	@DeleteMapping("/sessions")
+	public ResponseEntity<?> delete(@CookieValue(value = "SessionToken", required = false) String sessionToken, 
+			HttpServletResponse response) {
+		
+	    if (sessionToken != null) {
+	        sessionService.deleteSession(sessionToken);
+	    }
+	    
+	    ResponseCookie cookie = ResponseCookie.from("SessionToken", "")
+	            .httpOnly(true)
+	            .secure(true)
+	            .path("/")
+	            .maxAge(0)
+	            .sameSite("Lax")
+	            .build();
+
+		response.addHeader("Set-Cookie", cookie.toString());
+
+	    return ResponseEntity.noContent().build();
 		
 	}
 	
