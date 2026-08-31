@@ -9,6 +9,6 @@ import org.hibernate.annotations.IdGeneratorType;
 
 @IdGeneratorType(SecureRandomIdGenerator.class)
 @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.METHOD,ElementType.FIELD})
-public @interface SessionIdGenerator {
+public @interface SecureRandomId {
 
 }

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.backend.auth.utilities.SessionIdGenerator;
+import com.backend.auth.utilities.SecureRandomId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +17,7 @@ import jakarta.persistence.ManyToOne;
 public class Session {
 	
 	@Id
-	@SessionIdGenerator
+	@SecureRandomId
 	@Column(updatable = false)
 	private String sessionId;
 	
