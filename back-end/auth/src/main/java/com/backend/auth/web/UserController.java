@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.auth.config.SessionProperties;
 import com.backend.auth.model.User;
 import com.backend.auth.service.SessionService;
 import com.backend.auth.service.UserService;
@@ -29,10 +30,12 @@ public class UserController {
 	
 	private final UserService userService;
 	private final SessionService sessionService;
+	private final SessionProperties sessionProperties;
 	
-	public UserController(UserService userService, SessionService sessionService) {
+	public UserController(UserService userService, SessionService sessionService, SessionProperties sessionProperties) {
 		this.userService = userService;
 		this.sessionService = sessionService;
+		this.sessionProperties = sessionProperties;
 	}
 
 	@PostMapping("/users")
@@ -44,7 +47,7 @@ public class UserController {
 		        .httpOnly(true)
 		        .secure(true)
 		        .path("/")
-		        .maxAge(3600)
+		        .maxAge(sessionProperties.lifetime())
 		        .sameSite("Lax")
 		        .build();
 

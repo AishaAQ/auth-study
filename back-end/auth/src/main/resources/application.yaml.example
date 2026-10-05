@@ -19,3 +19,7 @@ spring:
             scripts:
               action: create
               create-target: create.sql
+
+auth:
+  session:
+    lifetime: 1h

@@ -1,6 +1,6 @@
 package com.backend.auth.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -31,13 +31,12 @@ public class Session {
 	
 	@Column(nullable = false)
 	@CreationTimestamp
-	private LocalDateTime createdAt;
+	private Instant createdAt;
 	
-	// TODO: sessionexpiry
-//	@Column(nullable = false)
-	private LocalDateTime expiresAt;
+	@Column(nullable = false)
+	private Instant expiresAt;
 	
-	private LocalDateTime lastSeenAt;
+	private Instant lastSeenAt;
 	
 	private String userAgent;
 	
@@ -51,19 +50,19 @@ public class Session {
 		this.user = user;
 	}
 
-	public LocalDateTime getExpiresAt() {
+	public Instant getExpiresAt() {
 		return expiresAt;
 	}
 
-	public void setExpiresAt(LocalDateTime expiresAt) {
+	public void setExpiresAt(Instant expiresAt) {
 		this.expiresAt = expiresAt;
 	}
 
-	public LocalDateTime getLastSeenAt() {
+	public Instant getLastSeenAt() {
 		return lastSeenAt;
 	}
 
-	public void setLastSeenAt(LocalDateTime lastSeenAt) {
+	public void setLastSeenAt(Instant lastSeenAt) {
 		this.lastSeenAt = lastSeenAt;
 	}
 
@@ -91,7 +90,7 @@ public class Session {
 		return user;
 	}
 
-	public LocalDateTime getCreatedAt() {
+	public Instant getCreatedAt() {
 		return createdAt;
 	}
 

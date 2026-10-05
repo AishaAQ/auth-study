@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.auth.config.SessionProperties;
 import com.backend.auth.service.SessionService;
 import com.backend.auth.web.dto.UserDTO;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
@@ -26,9 +26,11 @@ import jakarta.validation.Valid;
 public class SessionController {
 	
 	private final SessionService sessionService;
+	private final SessionProperties sessionProperties;
 	
-	public SessionController(SessionService sessionService) {
+	public SessionController(SessionService sessionService, SessionProperties sessionProperties) {
 		this.sessionService = sessionService;
+		this.sessionProperties = sessionProperties;
 	}
 	
 	@PostMapping("/sessions")
@@ -40,7 +42,7 @@ public class SessionController {
 		        .httpOnly(true)
 		        .secure(true)
 		        .path("/")
-		        .maxAge(3600)
+		        .maxAge(sessionProperties.lifetime())
 		        .sameSite("Lax")
 		        .build();
 
