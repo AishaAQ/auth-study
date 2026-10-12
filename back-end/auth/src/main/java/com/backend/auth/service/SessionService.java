@@ -1,12 +1,12 @@
 package com.backend.auth.service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
-import com.backend.auth.config.SessionProperties;
+import com.backend.auth.config.AuthProperties;
 import com.backend.auth.model.Session;
 import com.backend.auth.model.User;
 import com.backend.auth.repo.SessionRepository;
@@ -17,13 +17,13 @@ import jakarta.transaction.Transactional;
 public class SessionService {
 	
 	private final SessionRepository sessionRepository;
-	private final SessionProperties sessionProperties;
+	private final AuthProperties authProperties;
 	
 	private final UserService userService;
 	
-	public SessionService(SessionRepository sessionRepository, SessionProperties sessionProperties, UserService userService) {
+	public SessionService(SessionRepository sessionRepository, AuthProperties authProperties, UserService userService) {
 		this.sessionRepository = sessionRepository;
-		this.sessionProperties = sessionProperties;
+		this.authProperties = authProperties;
 		this.userService = userService;
 	}
 	
@@ -40,7 +40,7 @@ public class SessionService {
 		
 		Instant now = Instant.now();
 		Session session = new Session(user);
-		session.setExpiresAt(now.plus(sessionProperties.lifetime()));
+		session.setExpiresAt(now.plus(authProperties.session().lifetime()));
 		sessionRepository.save(session);
 				
 		return session.getSessionId();
@@ -62,6 +62,27 @@ public class SessionService {
 		}
 		
 		return true;
+		
+	}
+	
+	@Transactional
+	public Optional<User> authenticate(String sessionId) {
+		
+		Optional<Session> session = sessionRepository.findById(sessionId);
+		
+		if (session.isEmpty()) return Optional.empty();
+		
+		Session currentSession = session.get();
+		
+		if (!currentSession.getExpiresAt().isAfter(Instant.now())) {
+			sessionRepository.delete(currentSession);
+			return Optional.empty();
+		}
+		
+		User user = currentSession.getUser();
+		Hibernate.initialize(user);
+		
+		return Optional.of(user);
 		
 	}
 	

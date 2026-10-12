@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.auth.config.SessionProperties;
+import com.backend.auth.config.AuthProperties;
 import com.backend.auth.model.User;
 import com.backend.auth.service.SessionService;
 import com.backend.auth.service.UserService;
@@ -21,21 +21,17 @@ import com.backend.auth.web.dto.UserDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
-@CrossOrigin(
-	origins = "http://localhost:3000",
-	allowCredentials = "true"
-)
 @RestController
 public class UserController {
 	
 	private final UserService userService;
 	private final SessionService sessionService;
-	private final SessionProperties sessionProperties;
+	private final AuthProperties authProperties;
 	
-	public UserController(UserService userService, SessionService sessionService, SessionProperties sessionProperties) {
+	public UserController(UserService userService, SessionService sessionService, AuthProperties authProperties) {
 		this.userService = userService;
 		this.sessionService = sessionService;
-		this.sessionProperties = sessionProperties;
+		this.authProperties = authProperties;
 	}
 
 	@PostMapping("/users")
@@ -47,7 +43,7 @@ public class UserController {
 		        .httpOnly(true)
 		        .secure(true)
 		        .path("/")
-		        .maxAge(sessionProperties.lifetime())
+		        .maxAge(authProperties.session().lifetime())
 		        .sameSite("Lax")
 		        .build();
 

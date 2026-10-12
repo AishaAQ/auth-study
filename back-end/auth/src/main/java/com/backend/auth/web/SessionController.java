@@ -11,26 +11,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.auth.config.SessionProperties;
+import com.backend.auth.config.AuthProperties;
+import com.backend.auth.model.User;
 import com.backend.auth.service.SessionService;
 import com.backend.auth.web.dto.UserDTO;
+import com.backend.auth.web.dto.UserProfileDTO;
+import com.backend.auth.web.security.SecurityContext;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
-@CrossOrigin(
-	origins = "http://localhost:3000",
-	allowCredentials = "true"
-)
 @RestController
 public class SessionController {
 	
 	private final SessionService sessionService;
-	private final SessionProperties sessionProperties;
+	private final AuthProperties authProperties;
 	
-	public SessionController(SessionService sessionService, SessionProperties sessionProperties) {
+	public SessionController(SessionService sessionService, AuthProperties authProperties) {
 		this.sessionService = sessionService;
-		this.sessionProperties = sessionProperties;
+		this.authProperties = authProperties;
 	}
 	
 	@PostMapping("/sessions")
@@ -42,7 +41,7 @@ public class SessionController {
 		        .httpOnly(true)
 		        .secure(true)
 		        .path("/")
-		        .maxAge(sessionProperties.lifetime())
+		        .maxAge(authProperties.session().lifetime())
 		        .sameSite("Lax")
 		        .build();
 
@@ -52,18 +51,11 @@ public class SessionController {
 		
 	}
 	
-	@GetMapping("/sessions/validation")
-	public ResponseEntity<?> validate(@CookieValue(value = "SessionToken", required = false) String sessionToken) {
-		
-		if (sessionToken == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		
-		boolean isValid = sessionService.isValidSession(sessionToken);
-		
-		if (!isValid) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		
-		
-	    return ResponseEntity.ok().build();
-		
+	@GetMapping("/api/me/profile")
+	public ResponseEntity<UserProfileDTO> getUserProfile() {
+		User currentUser = SecurityContext.getCurrentUser();
+		UserProfileDTO profile = new UserProfileDTO(currentUser.getUserId(), currentUser.getEmail());
+	    return ResponseEntity.ok(profile);	
 	}
 	
 	@DeleteMapping("/sessions")

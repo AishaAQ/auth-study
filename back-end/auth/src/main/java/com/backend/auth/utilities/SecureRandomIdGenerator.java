@@ -23,7 +23,6 @@ public class SecureRandomIdGenerator implements BeforeExecutionGenerator {
 	public String generate(SharedSessionContractImplementor session, Object owner, Object currentValue,
 			EventType eventType) {
 		
-		SecureRandom secureRandom = new SecureRandom();
 		byte[] bytes = new byte[32];
 		SECURE_RANDOM.nextBytes(bytes);
 		
