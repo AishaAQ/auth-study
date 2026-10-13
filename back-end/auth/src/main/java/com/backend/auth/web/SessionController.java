@@ -1,10 +1,8 @@
 package com.backend.auth.web;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +30,7 @@ public class SessionController {
 		this.authProperties = authProperties;
 	}
 	
-	@PostMapping("/sessions")
+	@PostMapping("/api/auth/sessions")
 	public ResponseEntity<?> create(@RequestBody @Valid UserDTO user, HttpServletResponse response) {
 		
 		String sessionToken = sessionService.createSession(user.email, user.password);
@@ -51,14 +49,7 @@ public class SessionController {
 		
 	}
 	
-	@GetMapping("/api/me/profile")
-	public ResponseEntity<UserProfileDTO> getUserProfile() {
-		User currentUser = SecurityContext.getCurrentUser();
-		UserProfileDTO profile = new UserProfileDTO(currentUser.getUserId(), currentUser.getEmail());
-	    return ResponseEntity.ok(profile);	
-	}
-	
-	@DeleteMapping("/sessions")
+	@DeleteMapping("/api/auth/sessions/current")
 	public ResponseEntity<?> delete(@CookieValue(value = "SessionToken", required = false) String sessionToken, 
 			HttpServletResponse response) {
 		

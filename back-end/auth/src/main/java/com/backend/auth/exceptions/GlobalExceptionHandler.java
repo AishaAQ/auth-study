@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<Map<String, String>> handleException(AuthException ex) {
     	
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(ex.getHttpStatus())
                              .body(Map.of("error", ex.getMessage()));
     }
     

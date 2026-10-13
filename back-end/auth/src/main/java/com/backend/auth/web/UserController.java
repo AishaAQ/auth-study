@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.auth.config.AuthProperties;
 import com.backend.auth.model.User;
+import com.backend.auth.model.UserRole;
 import com.backend.auth.service.SessionService;
 import com.backend.auth.service.UserService;
 import com.backend.auth.web.dto.UserDTO;
+import com.backend.auth.web.dto.UserProfileDTO;
+import com.backend.auth.web.security.RequiresRole;
+import com.backend.auth.web.security.SecurityContext;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -34,7 +37,7 @@ public class UserController {
 		this.authProperties = authProperties;
 	}
 
-	@PostMapping("/users")
+	@PostMapping("/api/users")
 	public ResponseEntity<?> register(@RequestBody @Valid UserDTO user, HttpServletResponse response) {
 		User newUser = userService.register(user.email, user.password);
 		String sessionToken = sessionService.createSession(newUser);
@@ -59,6 +62,14 @@ public class UserController {
 	    		.body(responseBody);
 	}
 	
+	@GetMapping("/api/me/profile")
+	public ResponseEntity<UserProfileDTO> getUserProfile() {
+		User currentUser = SecurityContext.getCurrentUser();
+		UserProfileDTO profile = new UserProfileDTO(currentUser.getUserId(), currentUser.getEmail());
+	    return ResponseEntity.ok(profile);	
+	}
+	
+	@RequiresRole(UserRole.ADMIN)
 	@GetMapping("/users")
 	public Collection<User> getUsers() {
 		return userService.getUsers();
