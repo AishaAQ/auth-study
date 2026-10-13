@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,6 +33,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleException(ResourceAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT) 
                              .body(Map.of("error", ex.getMessage()));
+    }
+    
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Void> handleTypeMismatch() {
+    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     
 }
