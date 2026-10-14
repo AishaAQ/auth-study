@@ -21,6 +21,7 @@ import com.backend.auth.web.dto.UserProfileDTO;
 import com.backend.auth.web.security.RequiresRole;
 import com.backend.auth.web.security.SecurityContext;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
@@ -38,9 +39,26 @@ public class UserController {
 	}
 
 	@PostMapping("/api/users")
-	public ResponseEntity<?> register(@RequestBody @Valid UserDTO user, HttpServletResponse response) {
+	public ResponseEntity<?> register(
+			@RequestBody @Valid UserDTO user, 
+			HttpServletRequest request,
+			HttpServletResponse response) {
+		
 		User newUser = userService.register(user.email, user.password);
-		String sessionToken = sessionService.createSession(newUser);
+		
+		String userAgent = request.getHeader("User-Agent");
+		if (userAgent == null || userAgent.isBlank()) {
+			userAgent = "Unknown Device/Script";
+		}
+		
+		String ipAddress = request.getHeader("X-Forwarded-For");
+		if (ipAddress == null || ipAddress.isBlank()) {
+			ipAddress = request.getRemoteAddr();
+		} else {
+			ipAddress = ipAddress.split(",")[0].trim();
+		}
+		
+		String sessionToken = sessionService.createSession(newUser, userAgent, ipAddress);
 		
 		ResponseCookie cookie = ResponseCookie.from("SessionToken", sessionToken)
 		        .httpOnly(true)

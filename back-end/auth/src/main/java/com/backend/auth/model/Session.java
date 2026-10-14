@@ -1,6 +1,7 @@
 package com.backend.auth.model;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -9,6 +10,8 @@ import com.backend.auth.utilities.SecureRandomId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,9 +20,13 @@ import jakarta.persistence.ManyToOne;
 public class Session {
 	
 	@Id
-	@SecureRandomId
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(updatable = false)
-	private String sessionId;
+	private UUID sessionId;
+	
+	@SecureRandomId
+	@Column(updatable = false, unique = true, nullable = false)
+	private String sessionToken;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
@@ -82,8 +89,12 @@ public class Session {
 		this.ipAddress = ipAddress;
 	}
 
-	public String getSessionId() {
+	public UUID getSessionId() {
 		return sessionId;
+	}
+	
+	public String getSessionToken() {
+		return sessionToken;
 	}
 
 	public User getUser() {

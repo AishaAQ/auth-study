@@ -5,9 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.hibernate.annotations.IdGeneratorType;
+import org.hibernate.annotations.ValueGenerationType;
 
-@IdGeneratorType(SecureRandomIdGenerator.class)
+@ValueGenerationType(generatedBy = SecureRandomIdGenerator.class)
 @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.METHOD,ElementType.FIELD})
 public @interface SecureRandomId {
 
