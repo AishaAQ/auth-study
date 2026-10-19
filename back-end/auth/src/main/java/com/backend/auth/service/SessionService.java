@@ -50,7 +50,7 @@ public class SessionService {
 		session.setIpAddress(ipAddress);
 		session.setLastSeenAt(now);
 		
-		sessionRepository.save(session);
+		sessionRepository.saveAndFlush(session);
 				
 		return session.getSessionToken();
 		

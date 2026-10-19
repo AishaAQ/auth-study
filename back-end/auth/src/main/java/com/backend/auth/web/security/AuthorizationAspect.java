@@ -2,6 +2,7 @@ package com.backend.auth.web.security;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import com.backend.auth.exceptions.AuthException;
@@ -23,7 +24,7 @@ public class AuthorizationAspect {
 		
 		UserRole requiredRole = requiresRole.value();
 		if (currentUser.getRole() != requiredRole) {
-			throw new AuthException("Access Denied.");
+			throw new AuthException("Access Denied.", HttpStatus.FORBIDDEN);
 		}
 	}
 

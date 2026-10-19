@@ -69,6 +69,7 @@ public class SessionController {
 		
 	}
 	
+	@RequiresRole(UserRole.ADMIN)
 	@GetMapping("/api/auth/sessions")
 	public Collection<Session> getSessions() {
 		UUID currentUserId = SecurityContext.getCurrentUser().getUserId();

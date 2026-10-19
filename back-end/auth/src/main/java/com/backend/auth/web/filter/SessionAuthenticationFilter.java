@@ -40,21 +40,13 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter{
 		String path = request.getRequestURI();
 		String method = request.getMethod();
 		
-		try {
-			if (handlerMapping.getHandler(request) == null) {
-				filterChain.doFilter(request,  response);
-				return;
-			}
-		} catch (Exception e) {
-			filterChain.doFilter(request,  response);
-			return;
-		}
-		
+		// Skip authentication for public routes
 		if (requestMatcher.isPublicRequest(path, method)) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 		
+		// Extract session token
 		String sessionToken = null;		
 		if (request.getCookies() != null) {
 			for (Cookie cookie : request.getCookies()) {
@@ -65,11 +57,13 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter{
 			}
 		}
 	
+		// return 401 if session token absent
 		if (sessionToken == null) {
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			return;
 		}
 		
+		// Verify session token
 		Optional<User> authenticatedUser = sessionService.authenticate(sessionToken);	
 		if (authenticatedUser.isEmpty()) {
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
