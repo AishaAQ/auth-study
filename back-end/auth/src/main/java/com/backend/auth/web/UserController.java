@@ -2,20 +2,24 @@ package com.backend.auth.web;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.auth.config.AuthProperties;
 import com.backend.auth.model.User;
 import com.backend.auth.model.UserRole;
+import com.backend.auth.service.AccountService;
 import com.backend.auth.service.SessionService;
 import com.backend.auth.service.UserService;
+import com.backend.auth.web.dto.ChangePasswordDTO;
 import com.backend.auth.web.dto.UserDTO;
 import com.backend.auth.web.dto.UserProfileDTO;
 import com.backend.auth.web.security.RequiresRole;
@@ -30,11 +34,13 @@ public class UserController {
 	
 	private final UserService userService;
 	private final SessionService sessionService;
+	private final AccountService accountService;
 	private final AuthProperties authProperties;
 	
-	public UserController(UserService userService, SessionService sessionService, AuthProperties authProperties) {
+	public UserController(UserService userService, SessionService sessionService, AccountService accountService, AuthProperties authProperties) {
 		this.userService = userService;
 		this.sessionService = sessionService;
+		this.accountService = accountService;
 		this.authProperties = authProperties;
 	}
 
@@ -91,6 +97,46 @@ public class UserController {
 	@GetMapping("/users")
 	public Collection<User> getUsers() {
 		return userService.getUsers();
+	}
+	
+	@PutMapping("/api/me/password")
+	public ResponseEntity<?> changePassword(
+			@RequestBody @Valid ChangePasswordDTO changePasswordDTO, 
+			HttpServletRequest request,
+			HttpServletResponse response
+			) {
+		
+		String currentPassword = changePasswordDTO.currentPassword;
+		String newPassword = changePasswordDTO.newPassword;
+		UUID userId = SecurityContext.getCurrentUser().getUserId();
+		
+		String userAgent = request.getHeader("User-Agent");
+		if (userAgent == null || userAgent.isBlank()) {
+			userAgent = "Unknown Device/Script";
+		}
+		
+		String ipAddress = request.getHeader("X-Forwarded-For");
+		if (ipAddress == null || ipAddress.isBlank()) {
+			ipAddress = request.getRemoteAddr();
+		} else {
+			ipAddress = ipAddress.split(",")[0].trim();
+		}
+		
+		String sessionToken = accountService.changePassword(userId, currentPassword, newPassword, userAgent, ipAddress);
+		
+		ResponseCookie cookie = ResponseCookie.from("SessionToken", sessionToken)
+		        .httpOnly(true)
+		        .secure(true)
+		        .path("/")
+		        .maxAge(authProperties.session().lifetime())
+		        .sameSite("Lax")
+		        .build();
+
+		response.addHeader("Set-Cookie", cookie.toString());
+
+	    return ResponseEntity
+	    		.status(HttpStatus.OK)
+	    		.build();
 	}
 	
 }

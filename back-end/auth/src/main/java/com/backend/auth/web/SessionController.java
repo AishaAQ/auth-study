@@ -19,7 +19,6 @@ import com.backend.auth.model.User;
 import com.backend.auth.model.UserRole;
 import com.backend.auth.service.SessionService;
 import com.backend.auth.web.dto.UserDTO;
-import com.backend.auth.web.dto.UserProfileDTO;
 import com.backend.auth.web.security.RequiresRole;
 import com.backend.auth.web.security.SecurityContext;
 

@@ -2,7 +2,9 @@ package com.backend.auth.service;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.backend.auth.exceptions.AuthException;
@@ -31,15 +33,15 @@ public class UserService {
 	}
 	
 	@Transactional
-	public User register(String rawEmail, String password) {
+	public User register(String email, String password) {
 		
-		String email = rawEmail.toLowerCase();
+		String normalizedEmail = email.toLowerCase();
 		
-		if (userRepository.existsByEmail(email)) throw new ResourceAlreadyExistsException("Email already registered");
+		if (userRepository.existsByEmail(normalizedEmail)) throw new ResourceAlreadyExistsException("Email already registered");
 
 		String passwordHash = Hashing.generateHash(password, Optional.empty());
 		
-        User user = new User(email);
+        User user = new User(normalizedEmail);
         userRepository.save(user);
         
         EmailAuth emailAuth = new EmailAuth(user, passwordHash);
@@ -49,9 +51,11 @@ public class UserService {
 		
 	}
 	
-	public User authenticate(String rawEmail, String password) {
+	public User authenticate(String email, String password) {
 		
-		Optional<EmailAuth> emailAuth = emailAuthRepository.findByUserEmail(rawEmail.toLowerCase());
+		String normalizedEmail = email.toLowerCase();
+		
+		Optional<EmailAuth> emailAuth = emailAuthRepository.findByUserEmail(normalizedEmail);
 		
 		String hashString = emailAuth
                 .map(EmailAuth::getPasswordHash)
@@ -68,6 +72,28 @@ public class UserService {
 	
 	public Collection<User> getUsers() {
 		return userRepository.findAll();
+	}
+	
+	@Transactional
+	public User changePassword(UUID userId, String currentPassword, String newPassword) {
+				
+		Optional<EmailAuth> emailAuthOpt = emailAuthRepository.findById(userId);
+		
+		if (emailAuthOpt.isEmpty()) throw new AuthException("No password set for this account", HttpStatus.BAD_REQUEST);
+		
+		EmailAuth emailAuth = emailAuthOpt.get();
+		
+		String hashString = emailAuth.getPasswordHash();
+		
+		boolean verified = Hashing.verifyPassword(currentPassword, hashString);
+		if (!verified) throw new AuthException("Current password is incorrect", HttpStatus.FORBIDDEN);
+		
+		if (currentPassword.equals(newPassword)) throw new AuthException("New password must not be same as current password", HttpStatus.CONFLICT);
+		
+		String passwordHash = Hashing.generateHash(newPassword, Optional.empty());
+		emailAuth.setPasswordHash(passwordHash);
+        	        
+	    return emailAuth.getUser();
 	}
 	
 }
