@@ -1,5 +1,6 @@
 package com.backend.auth.model;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,8 +27,8 @@ public class User {
 	@Column(unique = true, nullable = true)
 	private String email;
 	
-	@Column(nullable = false)
-	private boolean isVerified = false;
+	@Column
+	private Instant emailVerifiedAt;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -55,12 +56,8 @@ public class User {
 		this.email = email;
 	}
 
-	public boolean isVerified() {
-		return isVerified;
-	}
-
-	public void setVerified(boolean isVerified) {
-		this.isVerified = isVerified;
+	public Instant getEmailVerifiedAt() {
+		return emailVerifiedAt;
 	}
 
 	public LocalDateTime getLastLogin() {
@@ -85,6 +82,18 @@ public class User {
 
 	public void setRole(UserRole role) {
 		this.role = role;
+	}
+	
+	public boolean markEmailVerified() {
+		
+		if (isEmailVerified()) return false;
+		
+		emailVerifiedAt = Instant.now();
+		return true;
+	}
+	
+	public boolean isEmailVerified() {
+		return emailVerifiedAt != null;
 	}
 	
 }

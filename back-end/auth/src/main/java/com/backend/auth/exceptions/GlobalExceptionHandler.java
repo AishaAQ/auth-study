@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,6 +46,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleNotFound(NoResourceFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(Map.of("error", "The requested resource was not found"));
+    }
+    
+    @ExceptionHandler(RateLimitExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleException(RateLimitExceededException ex) {
+    	Map<String, Object> body = new HashMap<>();
+        body.put("error", "COOLDOWN_ACTIVE");
+        body.put("message", ex.getMessage());
+        body.put("retryAfterSeconds", ex.getSecondsRemaining());
+        
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .header(HttpHeaders.RETRY_AFTER, String.valueOf(ex.getSecondsRemaining()))
+                .body(body);
     }
     
 }
