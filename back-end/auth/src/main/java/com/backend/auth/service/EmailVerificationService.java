@@ -1,7 +1,10 @@
 package com.backend.auth.service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import com.backend.auth.model.EmailVerificationToken;
 import com.backend.auth.model.User;
 import com.backend.auth.repo.EmailVerificationRateLimitRepository;
 import com.backend.auth.repo.EmailVerificationTokenRepository;
+import com.backend.auth.repo.UserRepository;
 import com.backend.auth.utilities.SecureRandomCodeGenerator;
 
 import jakarta.transaction.Transactional;
@@ -21,24 +25,30 @@ import jakarta.transaction.Transactional;
 @Service
 public class EmailVerificationService {
 	
-	public enum Result { VERIFIED, INVALID_CODE, CODE_EXPIRED }
+	public enum Result { VERIFIED, WRONG_CODE, NO_ACTIVE_CODE }
 	
+	private final UserRepository userRepository;
 	private final EmailVerificationTokenRepository tokenRepository;
 	private final EmailVerificationRateLimitRepository rateLimitRepository;
 	
 	private final AuthProperties authProperties;
 	
 	public EmailVerificationService(
+			UserRepository userRepository,
 			EmailVerificationTokenRepository tokenRepository, 
 			EmailVerificationRateLimitRepository rateLimitRepository,
 			AuthProperties authProperties) {
+		this.userRepository = userRepository;
 		this.tokenRepository = tokenRepository;
 		this.rateLimitRepository = rateLimitRepository;
 		this.authProperties = authProperties;
 	}
 	
 	@Transactional
-	public void requestVerificationToken(User user) {
+	public void requestVerificationToken(UUID userId) {
+		
+		User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new IllegalStateException("User not found: " + userId));
 		
 		if (user.getEmail() == null) throw new AuthException("User has no email address", HttpStatus.CONFLICT);
 		
@@ -65,13 +75,54 @@ public class EmailVerificationService {
 	}
 	
 	@Transactional
-	public Result verifyEmail(User user, String submittedCode) {
+	public Result verifyEmail(UUID userId, String submittedToken) {
+		
+		User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new IllegalStateException("User not found: " + userId));
+		
 		if (user.isEmailVerified()) return Result.VERIFIED;
+		
+		Instant now = Instant.now();
+		
+		EmailVerificationRateLimit rateLimit = rateLimitRepository
+													.findWithLockByUserId(user.getUserId())
+													.orElse(null);
+		if (rateLimit == null) return Result.NO_ACTIVE_CODE;
+		
+		refreshAttemptWindow(rateLimit, now);
+		validateAttemptsLeft(rateLimit, now);
+		
+		EmailVerificationToken token = tokenRepository
+												.findById(user.getUserId())
+												.orElse(null);
+		if (token == null) return Result.NO_ACTIVE_CODE;
+		
+		if (token.isExpired() || !token.getEmail().equals(user.getEmail())) {
+			tokenRepository.delete(token);
+			return Result.NO_ACTIVE_CODE;
+		}
+		
+		if (!codesMatch(token.getToken(),submittedToken)) {
+			rateLimit.incrementFailedAttemptCounter();
+			return Result.WRONG_CODE;
+		}
+		
+		user.markEmailVerified();
+		tokenRepository.delete(token);
+		rateLimit.resetWindow(now);
+		
 		return Result.VERIFIED;
 	}
 	
+	// For constant time equality check
+	private boolean codesMatch(String stored, String submitted) {
+	    return MessageDigest.isEqual(
+	            stored.getBytes(StandardCharsets.UTF_8),
+	            submitted.getBytes(StandardCharsets.UTF_8));
+	}
+	
 	private EmailVerificationRateLimit getOrCreateRateLimit(User user) {
-		return rateLimitRepository.findById(user.getUserId())
+		return rateLimitRepository.findWithLockByUserId(user.getUserId())
 				.orElseGet(() -> new EmailVerificationRateLimit(user));
 	}
 	
