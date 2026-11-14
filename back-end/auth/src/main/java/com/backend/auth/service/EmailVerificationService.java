@@ -25,7 +25,7 @@ import jakarta.transaction.Transactional;
 @Service
 public class EmailVerificationService {
 	
-	public enum Result { VERIFIED, WRONG_CODE, NO_ACTIVE_CODE }
+	public enum Result { VERIFIED, ALREADY_VERIFIED, WRONG_CODE, NO_ACTIVE_CODE }
 	
 	private final UserRepository userRepository;
 	private final EmailVerificationTokenRepository tokenRepository;
@@ -80,7 +80,7 @@ public class EmailVerificationService {
 		User user = userRepository.findById(userId)
 	            .orElseThrow(() -> new IllegalStateException("User not found: " + userId));
 		
-		if (user.isEmailVerified()) return Result.VERIFIED;
+		if (user.isEmailVerified()) return Result.ALREADY_VERIFIED;
 		
 		Instant now = Instant.now();
 		

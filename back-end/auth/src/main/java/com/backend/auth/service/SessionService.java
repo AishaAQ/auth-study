@@ -126,5 +126,13 @@ public class SessionService {
 	public void deleteSessions(UUID userId) {
 		sessionRepository.deleteByUserUserId(userId);
 	}
+	
+	@Transactional
+	public String resetSessions(UUID userId, String userAgent, String ipAddress) {
+		deleteSessions(userId);
+		User user = userService.findUser(userId)
+	            .orElseThrow(() -> new IllegalStateException("User not found: " + userId));
+		return createSession(user, userAgent, ipAddress);
+	}
 
 }

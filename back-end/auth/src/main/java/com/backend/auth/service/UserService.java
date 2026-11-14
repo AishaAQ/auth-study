@@ -96,4 +96,8 @@ public class UserService {
 	    return emailAuth.getUser();
 	}
 	
+	public Optional<User> findUser(UUID userId) {
+		return userRepository.findById(userId);
+	}
+	
 }
