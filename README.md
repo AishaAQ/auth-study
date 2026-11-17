@@ -12,9 +12,22 @@ A proof-of-concept project focused on designing and implementing an authenticati
 
 ## ✨ Features (In Progress)
 
-- Email-based authentication with session management
+### Implemented
+- Stateful session management with email and password authentication
+- Argon2id password hashing and secure session tokens
+- Individual session revocation and logout across all devices
+- Password changes with session invalidation
+- Email verification with token expiration and rate limiting
+- Role-based access contro
 - OAuth authentication flow
-- Email verification, 2FA and password recovery
+- Integration tests for authentication, session management, and authorization
+
+### Planned
+- Complete frontend implementation and integration with the backend
+- OAuth authentication flow
+- Two-factor authentication (2FA)
+- Password recovery
+- More integration tests and security testing
  
 ## 📍 Motivation
 
