@@ -104,7 +104,10 @@ public class SessionController {
 			HttpServletResponse response) {
 		User currentUser = SecurityContext.getCurrentUser();
 		boolean wasCurrentSession = sessionService.sessionExists(sessionId, currentSessionToken);
-		sessionService.deleteSession(sessionId, currentUser.getUserId());
+		boolean deleted = sessionService.deleteSession(sessionId, currentUser.getUserId());
+		
+		if (!deleted) return ResponseEntity.notFound().build();
+		
 		if (wasCurrentSession) clearSessionCookie(response);
 		return ResponseEntity.noContent().build();
 	}

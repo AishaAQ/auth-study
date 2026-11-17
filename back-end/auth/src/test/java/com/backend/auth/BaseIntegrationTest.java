@@ -14,7 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-
+import com.backend.auth.repo.SessionRepository;
+import com.backend.auth.repo.UserRepository;
 
 import jakarta.servlet.http.Cookie;
 import tools.jackson.databind.ObjectMapper;
@@ -32,6 +33,12 @@ public abstract class BaseIntegrationTest {
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;
+    
+    @Autowired
+    protected SessionRepository sessionRepository;
+    
+    @Autowired
+    protected UserRepository userRepository;
 
     @BeforeEach
     void resetDatabase() {

@@ -109,17 +109,15 @@ public class SessionService {
 	}
 	
 	@Transactional
-	public void deleteSession(UUID sessionId, UUID userId) {
+	public boolean deleteSession(UUID sessionId, UUID userId) {
 		Optional<Session> sessionOpt = sessionRepository.findById(sessionId);
-		
-		if (sessionOpt.isPresent()) {
-			Session session = sessionOpt.get();
-			if (session.getUser().getUserId().equals(userId)) {
-				sessionRepository.delete(session);
-			} else {
-				throw new AuthException("Access Denied", HttpStatus.FORBIDDEN);
-			}
-		}
+		if (sessionOpt.isEmpty()) return false;
+
+		Session session = sessionOpt.get();
+		if (!session.getUser().getUserId().equals(userId)) return false;
+
+		sessionRepository.delete(session);
+		return true;
 	}
 	
 	@Transactional
